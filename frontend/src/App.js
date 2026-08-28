@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+const API_URL = "https://hospital-management-system1-hmqn.onrender.com";
 
 function App() {
 
@@ -33,13 +34,23 @@ function App() {
 
   useEffect(() => {
 
-    fetchDoctors();
+    if (page === "doctors") {
+        fetchDoctors();
+    }
 
-    fetchPatients();
+    if (page === "patients") {
+        fetchPatients();
+    }
 
-    fetchAppointments();
+    if (page === "appointments") {
+        fetchAppointments();
+    }
 
-  }, []);
+    if (page === "appointment") {
+        fetchDoctors();
+    }
+
+}, [page]);
 
 
 
@@ -48,14 +59,31 @@ function App() {
 
   const fetchDoctors = async () => {
 
-    const response = await fetch(
-      "http://localhost:8080/doctors"
-    );
+    try {
 
-    const data = await response.json();
+        const response = await fetch(
+            `${API_URL}/doctors`
+        );
 
-    setDoctors(data);
-  };
+        if (!response.ok) {
+            throw new Error(
+                `Server error: ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        console.log("Doctors received:", data);
+
+        setDoctors(data);
+
+    } catch (error) {
+
+        console.error("Error fetching doctors:", error);
+
+        alert("Unable to load doctors. Please try again.");
+    }
+};
 
 
 
@@ -65,7 +93,7 @@ function App() {
   const fetchPatients = async () => {
 
     const response = await fetch(
-      "http://localhost:8080/patients"
+      `${API_URL}/patients`
     );
 
     const data = await response.json();
@@ -81,7 +109,7 @@ function App() {
   const fetchAppointments = async () => {
 
     const response = await fetch(
-      "http://localhost:8080/appointments"
+      `${API_URL}/appointments`
     );
 
     const data = await response.json();
@@ -104,7 +132,7 @@ function App() {
     }
 
     await fetch(
-      "http://localhost:8080/addDoctor",
+      `${API_URL}/addDoctor`,
       {
         method: "POST",
 
@@ -136,7 +164,7 @@ function App() {
   const deleteDoctor = async (id) => {
 
     await fetch(
-      `http://localhost:8080/deleteDoctor/${id}`,
+      `${API_URL}/deleteDoctor/${id}`,
       {
         method: "DELETE"
       }
@@ -166,7 +194,7 @@ function App() {
     }
 
     await fetch(
-      "http://localhost:8080/bookAppointment",
+      `${API_URL}/bookAppointment`,
       {
         method: "POST",
 
@@ -214,7 +242,7 @@ function App() {
   const deleteAppointment = async (id) => {
 
     await fetch(
-      `http://localhost:8080/deleteAppointment/${id}`,
+      `${API_URL}/deleteAppointment/${id}`,
       {
         method: "DELETE"
       }
